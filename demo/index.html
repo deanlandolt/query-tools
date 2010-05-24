@@ -3,6 +3,13 @@
 <title>resource-query demo</title>
 <style type="text/css">
 label { font-variant: small-caps; }
+label a.sample {
+    font-variant: normal;
+    font-size: smaller;
+    padding-left: 15px;
+    text-decoration: none;
+    color: grey;
+}
 input, textarea {
     border: 1px solid #999999;
     width: 99.5%;
@@ -21,87 +28,45 @@ button {
 </head>
 <body>
 <h1>resource-query demo</h1>
+<form>
 
 <label>Query
-    <input id="query" onKeyPress="queueParse()" />
+    <input id="query" />
 </label>
 
 <label>Source Array
-    <textarea id="target" rows="12" cols="80"></textarea>
+    <a class="sample" href="#people/0">people</a>
+    <a class="sample" href="#books/0">books</a>
+    <textarea id="data" rows="12" cols="80"></textarea>
 </label>
 
 <label>Parsed Query
     <textarea id="parsed-query" disabled="disabled" rows="2" cols="80"></textarea>
 </label>
 
-<button id="execute" onclick="execute()">Execute</button>
+<button id="execute" type="submit">Execute</button>
 
 <label>Result
     <textarea id="result" disabled="disabled" rows="12" cols="80"></textarea>
 </label>
 
+</form>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script>
-// hacky module loader
+// hacky but effective module loader
 exports = {};
 </script>
 <script src="../lib/resource-query.js"></script>
 <script>
-var RQ = exports;
+RQ = exports;
 
-function incrementalParse() {
-    document.getElementById("result").innerHTML = "";
-    var query = document.getElementById("query").value;
-    var parsedNode = document.getElementById("parsed-query");
-    if (!query) {
-        parsedNode.value = "";
-        return;
-    }
-    try {
-        var parsedQuery = RQ.parseQuery(query);
-        parsedNode.innerHTML = JSON.stringify(parsedQuery);
-    }
-    catch (e) {
-        //parsedNode.innerHTML = ""; //e.message?
-    }
-};
-
-var queuedParser = false;
-function queueParse() {
-    if (queuedParser) return;
-    queuedParser = true;
-    setTimeout(function() {
-        queuedParser = false;
-        incrementalParse();
-    }, 100);
-}
-
-function execute() {
-    var query = document.getElementById("query").value;
-    var target = eval(document.getElementById("target").innerHTML);
-    var result = RQ.query(query, {}, target);
-    var resultNode = document.getElementById("result");
-    if (result) {
-        resultNode.innerHTML = JSON.stringify(result);
-    }
-    else {
-        resultNode.innerHTML = "[]";
-    }
-};
-
-function init() {
-    document.getElementById("query").value = example.people.queries[0];
-    incrementalParse();
-    document.getElementById("target").innerHTML = example.people.target;
-};
-
-
-var example = {};
-example.people = {};
-example.people.queries = [
+var sample = {};
+sample.people = {};
+sample.people.queries = [
     "email=jdoe%40example.com&select(name)",
     "name=John%20Doe"
 ];
-example.people.target = [
+sample.people.data = [
 '[{',
 '  name: "John Doe",',
 '  email: "john@doe.org"',
@@ -114,8 +79,71 @@ example.people.target = [
 '}]'
 ].join("\r\n");
 
+sample.books = {};
+sample.books.queries = [
+    "FirstName=Chris"
+];
+sample.books.data = [
+'[',
+'  { ID: 1, FirstName: "Chris", LastName: "Pearson", BookIDs: [1001, 1002, 1003] },',
+'  { ID: 2, FirstName: "Kate", LastName: "Johnson", BookIDs: [2001, 2002, 2003] },',
+'  { ID: 3, FirstName: "Josh", LastName: "Sutherland", BookIDs: [3001, 3002, 3003] },',
+'  { ID: 4, FirstName: "John", LastName: "Ronald", BookIDs: [4001, 4002, 4003] },',
+'  { ID: 5, FirstName: "Steve", LastName: "Pinkerton", BookIDs: [1001, 1002, 1003] },',
+'  { ID: 6, FirstName: "Katie", LastName: "Zimmerman", BookIDs: [2001, 2002, 2003] },',
+'  { ID: 7, FirstName: "Dirk", LastName: "Anderson", BookIDs: [3001, 3002, 3003] },',
+'  { ID: 8, FirstName: "Chris", LastName: "Stevenson", BookIDs: [4001, 4002, 4003] },',
+'  { ID: 9, FirstName: "Bernard", LastName: "Sutherland", BookIDs: [1001, 2002, 3003] },',
+'  { ID: 10, FirstName: "Kate", LastName: "Pinkerton", BookIDs: [4001, 3002, 2003],',
+'}]'
+].join("\r\n");
 
-init();
+function incrementalParse() {
+    $("#result").html("");
+    var query = $("#query").val();
+    var node = $("#parsed-query");
+    if (!query) {
+        node.html("");
+        return;
+    }
+    try {
+        var parsedQuery = RQ.parseQuery(query);
+        node.html(JSON.stringify(parsedQuery));
+    }
+    catch (e) {}
+};
+
+function refresh(name, queryIndex) {
+    $('#query').val(sample[name].queries[queryIndex]);
+    incrementalParse();
+    $("#data").html(sample[name].data);
+};
+
+$(function() {
+    
+    $('#query').keyup(function(ev) {
+        incrementalParse();
+    });
+    
+    $('a.sample').click(function(ev) {
+        var match = this.href.match(/#(\w+)\/(\d+)/);
+        if (match) {
+            refresh(match[1], parseInt(match[2], 10));
+        }
+    });
+    
+    $("#execute").click(function(ev) {
+        ev.preventDefault();
+        var query = $("#query").val();
+        var data = eval($("#data").html());
+        var result = RQ.query(query, {}, data);
+        var node = $("#result");
+        node.html(JSON.stringify(result));
+    });
+    
+    refresh("people", 0);
+});
+
 </script>
 </body>
 </html>
