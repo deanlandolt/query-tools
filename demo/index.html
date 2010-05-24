@@ -101,7 +101,7 @@ sample.books.data = [
 ].join("\r\n");
 
 function updateQuery() {
-    $("#result").html("");
+    //$("#result").html("");
     var query = $("#query").val();
     var node = $("#parsed-query");
     if (!query) {
@@ -150,6 +150,14 @@ function buildLinks(hash) {
     $('a.sample[href="#' + name + '/' + idx + '"]').css("color", "red");
 }
 
+function execute() {
+    var query = $("#query").val();
+    var data = eval($("#data").html());
+    var result = RQ.query(query, {}, data);
+    var node = $("#result");
+    node.html(JSON.stringify(result));
+};
+
 
 $(function() {
     $('#query').keyup(function(ev) {
@@ -158,11 +166,12 @@ $(function() {
     
     $("#execute").click(function(ev) {
         ev.preventDefault();
-        var query = $("#query").val();
-        var data = eval($("#data").html());
-        var result = RQ.query(query, {}, data);
-        var node = $("#result");
-        node.html(JSON.stringify(result));
+        execute();
+    });
+    
+    $("form").submit(function(ev) {
+        ev.preventDefault();
+        execute();
     });
     
     $(window).bind("hashchange", function() {
