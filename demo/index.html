@@ -51,6 +51,8 @@ button {
 </label>
 
 </form>
+<script src="global-es5.js"></script>
+<script src="json2.js"></script>
 <script src="jquery.min.js"></script>
 <script src="jquery.ba-hashchange.min.js"></script>
 <script>
@@ -68,17 +70,10 @@ sample.people.queries = [
     "name=John%20Doe"
 ];
 sample.people.data = [
-'[{',
-'  name: "John Doe",',
-'  email: "john@doe.org"',
-'},{',
-'  name: "John Doe",',
-'  email: "jdoe@example.com"',
-'},{',
-'  name: "Jane Doe",',
-'  email: "jane@doe.com"',
-'}]'
-].join("\r\n");
+  { name: "John Doe", email: "john@doe.org" },
+  { name: "John Doe", email: "jdoe@example.com" },
+  { name: "Jane Doe", email: "jane@doe.com" }
+];
 
 sample.books = {};
 sample.books.queries = [
@@ -86,19 +81,17 @@ sample.books.queries = [
     "select(FirstName)&distinct()"
 ];
 sample.books.data = [
-'[',
-'  { ID: 1, FirstName: "Chris", LastName: "Pearson", BookIDs: [1001, 1002, 1003] },',
-'  { ID: 2, FirstName: "Kate", LastName: "Johnson", BookIDs: [2001, 2002, 2003] },',
-'  { ID: 3, FirstName: "Josh", LastName: "Sutherland", BookIDs: [3001, 3002, 3003] },',
-'  { ID: 4, FirstName: "John", LastName: "Ronald", BookIDs: [4001, 4002, 4003] },',
-'  { ID: 5, FirstName: "Steve", LastName: "Pinkerton", BookIDs: [1001, 1002, 1003] },',
-'  { ID: 6, FirstName: "Katie", LastName: "Zimmerman", BookIDs: [2001, 2002, 2003] },',
-'  { ID: 7, FirstName: "Dirk", LastName: "Anderson", BookIDs: [3001, 3002, 3003] },',
-'  { ID: 8, FirstName: "Chris", LastName: "Stevenson", BookIDs: [4001, 4002, 4003] },',
-'  { ID: 9, FirstName: "Bernard", LastName: "Sutherland", BookIDs: [1001, 2002, 3003] },',
-'  { ID: 10, FirstName: "Kate", LastName: "Pinkerton", BookIDs: [4001, 3002, 2003],',
-'}]'
-].join("\r\n");
+  { ID: 1, FirstName: "Chris", LastName: "Pearson", BookIDs: [1001, 1002, 1003] },
+  { ID: 2, FirstName: "Kate", LastName: "Johnson", BookIDs: [2001, 2002, 2003] },
+  { ID: 3, FirstName: "Josh", LastName: "Sutherland", BookIDs: [3001, 3002, 3003] },
+  { ID: 4, FirstName: "John", LastName: "Ronald", BookIDs: [4001, 4002, 4003] },
+  { ID: 5, FirstName: "Steve", LastName: "Pinkerton", BookIDs: [1001, 1002, 1003] },
+  { ID: 6, FirstName: "Katie", LastName: "Zimmerman", BookIDs: [2001, 2002, 2003] },
+  { ID: 7, FirstName: "Dirk", LastName: "Anderson", BookIDs: [3001, 3002, 3003] },
+  { ID: 8, FirstName: "Chris", LastName: "Stevenson", BookIDs: [4001, 4002, 4003] },
+  { ID: 9, FirstName: "Bernard", LastName: "Sutherland", BookIDs: [1001, 2002, 3003] },
+  { ID: 10, FirstName: "Kate", LastName: "Pinkerton", BookIDs: [4001, 3002, 2003]
+}];
 
 function updateQuery() {
     //$("#result").html("");
@@ -123,7 +116,7 @@ function refresh(hash) {
     $('#query').val(sample[name].queries[idx]);
     updateQuery();
     if (!match[3]) {
-        $("#data").html(sample[name].data);
+        $("#data").html(JSON.stringify(sample[name].data));
     }
     buildLinks(hash);
 };
@@ -148,16 +141,15 @@ function buildLinks(hash) {
     }
     $("#query-menu").html(links.join(""));
     $('a.sample[href="#' + name + '/' + idx + '"]').css("color", "red");
-}
+};
 
 function execute() {
     var query = $("#query").val();
-    var data = eval($("#data").html());
+    var data = JSON.parse($("#data").html());
     var result = RQ.query(query, {}, data);
     var node = $("#result");
     node.html(JSON.stringify(result));
 };
-
 
 $(function() {
     $('#query').keyup(function(ev) {
@@ -186,7 +178,9 @@ $(function() {
     // populate data if it hasn't been
     var data = $("#data");
     if (!data.html().length) {
-        data.html(sample[window.location.hash.match(/#(\w+)(\/(\d+))?$/)[1]].data);
+        data.html(JSON.stringify(
+            sample[window.location.hash.match(/#(\w+)(\/(\d+))?$/)[1]].data
+        ));
     }
     
     
