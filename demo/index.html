@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>resource-query demo</title>
+<style type="text/css">
+label { font-variant: small-caps; }
+input, textarea {
+    border: 1px solid #999999;
+    width: 99.5%;
+    margin: 5px 0;
+    padding: 0.5%;
+    background-color: white;
+    color: black;
+}
+button {
+    width: 99.5%;
+    height: 48px;
+    margin: 5px 0;
+    display: block;
+}
+</style>
+</head>
+<body>
+<h1>resource-query demo</h1>
+
+<label>Query
+    <input id="query" onKeyPress="queueParse()" />
+</label>
+
+<label>Source Array
+    <textarea id="target" rows="12" cols="80"></textarea>
+</label>
+
+<label>Parsed Query
+    <textarea id="parsed-query" disabled="disabled" rows="2" cols="80"></textarea>
+</label>
+
+<button id="execute" onclick="execute()">Execute</button>
+
+<label>Result
+    <textarea id="result" disabled="disabled" rows="12" cols="80"></textarea>
+</label>
+
+<script>
+// hacky module loader
+exports = {};
+</script>
+<script src="../lib/resource-query.js"></script>
+<script>
+var RQ = exports;
+
+function incrementalParse() {
+    document.getElementById("result").innerHTML = "";
+    var query = document.getElementById("query").value;
+    var parsedNode = document.getElementById("parsed-query");
+    if (!query) {
+        parsedNode.value = "";
+        return;
+    }
+    try {
+        var parsedQuery = RQ.parseQuery(query);
+        parsedNode.innerHTML = JSON.stringify(parsedQuery);
+    }
+    catch (e) {
+        //parsedNode.innerHTML = ""; //e.message?
+    }
+};
+
+var queuedParser = false;
+function queueParse() {
+    if (queuedParser) return;
+    queuedParser = true;
+    setTimeout(function() {
+        queuedParser = false;
+        incrementalParse();
+    }, 100);
+}
+
+function execute() {
+    var query = document.getElementById("query").value;
+    var target = eval(document.getElementById("target").innerHTML);
+    var result = RQ.query(query, {}, target);
+    var resultNode = document.getElementById("result");
+    if (result) {
+        resultNode.innerHTML = JSON.stringify(result);
+    }
+    else {
+        resultNode.innerHTML = "[]";
+    }
+};
+
+function init() {
+    document.getElementById("query").value = example.people.queries[0];
+    incrementalParse();
+    document.getElementById("target").innerHTML = example.people.target;
+};
+
+
+var example = {};
+example.people = {};
+example.people.queries = [
+    "email=jdoe%40example.com&select(name)",
+    "name=John%20Doe"
+];
+example.people.target = [
+'[{',
+'  name: "John Doe",',
+'  email: "john@doe.org"',
+'},{',
+'  name: "John Doe",',
+'  email: "jdoe@example.com"',
+'},{',
+'  name: "Jane Doe",',
+'  email: "jane@doe.com"',
+'}]'
+].join("\r\n");
+
+
+init();
+</script>
+</body>
+</html>
