@@ -179,8 +179,15 @@ $(function() {
     });
     
     if (!window.location.hash)
-        window.location.hash = "#people/0";
+        window.location.hash = "#people";
+    
     refresh();
+    
+    // populate data if it hasn't been
+    var data = $("#data");
+    if (!data.html().length) {
+        data.html(sample[window.location.hash.match(/#(\w+)(\/(\d+))?$/)[1]].data);
+    }
     
     
 });
