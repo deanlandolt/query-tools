@@ -2,11 +2,12 @@
 <head>
 <title>resource-query demo</title>
 <style type="text/css">
-label { font-variant: small-caps; }
-label a.sample {
+.heading { font-variant: small-caps; }
+a.sample {
     font-variant: normal;
     font-size: smaller;
-    padding-left: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
     text-decoration: none;
     color: grey;
 }
@@ -30,28 +31,28 @@ button {
 <h1>resource-query demo</h1>
 <form>
 
-<label>Query
-    <input id="query" />
-</label>
+<span class="heading">Query</span>
+<span id="query-menu"></span>
+<input id="query" />
 
-<label>Source Array
-    <a class="sample" href="#people/0">people</a>
-    <a class="sample" href="#books/0">books</a>
+<label class="heading">Array
+    <span id="data-menu"></span>
     <textarea id="data" rows="12" cols="80"></textarea>
 </label>
 
-<label>Parsed Query
+<label class="heading">Parsed Query
     <textarea id="parsed-query" disabled="disabled" rows="2" cols="80"></textarea>
 </label>
 
 <button id="execute" type="submit">Execute</button>
 
-<label>Result
+<label class="heading">Result
     <textarea id="result" disabled="disabled" rows="12" cols="80"></textarea>
 </label>
 
 </form>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
+<script src="jquery.ba-hashchange.min.js"></script>
 <script>
 // hacky but effective module loader
 exports = {};
@@ -81,7 +82,8 @@ sample.people.data = [
 
 sample.books = {};
 sample.books.queries = [
-    "FirstName=Chris"
+    "FirstName=Chris",
+    "select(FirstName)&distinct()"
 ];
 sample.books.data = [
 '[',
@@ -98,7 +100,7 @@ sample.books.data = [
 '}]'
 ].join("\r\n");
 
-function incrementalParse() {
+function updateQuery() {
     $("#result").html("");
     var query = $("#query").val();
     var node = $("#parsed-query");
@@ -113,23 +115,45 @@ function incrementalParse() {
     catch (e) {}
 };
 
-function refresh(name, queryIndex) {
-    $('#query').val(sample[name].queries[queryIndex]);
-    incrementalParse();
-    $("#data").html(sample[name].data);
+function refresh(hash) {
+    hash = hash || window.location.hash;
+    match = hash.match(/#(\w+)(\/(\d+))?$/);
+    var name = match[1];
+    var idx = Number(match[3]) || 0;
+    $('#query').val(sample[name].queries[idx]);
+    updateQuery();
+    if (!match[3]) {
+        $("#data").html(sample[name].data);
+    }
+    buildLinks(hash);
 };
 
+
+function buildLinks(hash) {
+    hash = hash || window.location.hash;
+    var name = hash.match(/#(\w+)(\/(\d+))?$/)[1];
+    var idx = Number(match[3]) || 0;
+    
+    var links = [];
+    for (var key in sample) {
+        links.push('<a class="sample" href="#' + key + '">' + key + '</a>');
+    }
+    $("#data-menu").html(links.join(""));
+    $('a.sample[href="#' + name + '"]').css("color", "red");
+    
+    links = [];
+    var len = sample[name].queries.length;
+    for (var i = 0; i < len; i++) {
+        links.push('<a class="sample" href="#' + name + '/' + i + '">' + i + '</a>');
+    }
+    $("#query-menu").html(links.join(""));
+    $('a.sample[href="#' + name + '/' + idx + '"]').css("color", "red");
+}
+
+
 $(function() {
-    
     $('#query').keyup(function(ev) {
-        incrementalParse();
-    });
-    
-    $('a.sample').click(function(ev) {
-        var match = this.href.match(/#(\w+)\/(\d+)/);
-        if (match) {
-            refresh(match[1], parseInt(match[2], 10));
-        }
+        updateQuery();
     });
     
     $("#execute").click(function(ev) {
@@ -141,9 +165,16 @@ $(function() {
         node.html(JSON.stringify(result));
     });
     
-    refresh("people", 0);
+    $(window).bind("hashchange", function() {
+        refresh(location.hash);
+    });
+    
+    if (!window.location.hash)
+        window.location.hash = "#people/0";
+    refresh();
+    
+    
 });
-
 </script>
 </body>
 </html>
