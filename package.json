@@ -1,0 +1,15 @@
+{
+	"name": "array-tools",
+	"author": "Dean Landolt <dean@deanlandolt.com>",
+	"dependencies": [],
+	"contributors": ["Kris Zyp"],
+	"keywords": [
+		"json",
+		"schema",
+		"query",
+        "async"
+	],
+	"githubName": "array-tools",
+	"type": "zip",
+	"location": "http://github.com/deanlandolt/array-tools/zipball/master"
+}
