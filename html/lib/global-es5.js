@@ -27,14 +27,14 @@
 //
 
 // ES5 15.4.3.2 
-if (!Array.isArray) {
+if (typeof Array.isArray !== "function") {
     Array.isArray = function(obj) {
         return Object.prototype.toString.call(obj) == "[object Array]";
     };
 }
 
 // ES5 15.4.4.18
-if (!Array.prototype.forEach) {
+if (typeof Array.prototype.forEach !== "function") {
     Array.prototype.forEach =  function(block, thisObject) {
         var len = this.length >>> 0;
         for (var i = 0; i < len; i++) {
@@ -47,7 +47,7 @@ if (!Array.prototype.forEach) {
 
 // ES5 15.4.4.19
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/map
-if (!Array.prototype.map) {
+if (typeof Array.prototype.map !== "function") {
     Array.prototype.map = function(fun /*, thisp*/) {
         var len = this.length >>> 0;
         if (typeof fun != "function")
@@ -65,7 +65,7 @@ if (!Array.prototype.map) {
 }
 
 // ES5 15.4.4.20
-if (!Array.prototype.filter) {
+if (typeof Array.prototype.filter !== "function") {
     Array.prototype.filter = function (block /*, thisp */) {
         var values = [];
         var thisp = arguments[1];
@@ -77,7 +77,7 @@ if (!Array.prototype.filter) {
 }
 
 // ES5 15.4.4.16
-if (!Array.prototype.every) {
+if (typeof Array.prototype.every !== "function") {
     Array.prototype.every = function (block /*, thisp */) {
         var thisp = arguments[1];
         for (var i = 0; i < this.length; i++)
@@ -88,7 +88,7 @@ if (!Array.prototype.every) {
 }
 
 // ES5 15.4.4.17
-if (!Array.prototype.some) {
+if (typeof Array.prototype.some !== "function") {
     Array.prototype.some = function (block /*, thisp */) {
         var thisp = arguments[1];
         for (var i = 0; i < this.length; i++)
@@ -100,7 +100,7 @@ if (!Array.prototype.some) {
 
 // ES5 15.4.4.21
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduce
-if (!Array.prototype.reduce) {
+if (typeof Array.prototype.reduce !== "function") {
     Array.prototype.reduce = function(fun /*, initial*/) {
         var len = this.length >>> 0;
         if (typeof fun != "function")
@@ -137,7 +137,7 @@ if (!Array.prototype.reduce) {
 
 // ES5 15.4.4.22
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
-if (!Array.prototype.reduceRight) {
+if (typeof Array.prototype.reduceRight !== "function") {
     Array.prototype.reduceRight = function(fun /*, initial*/) {
         var len = this.length >>> 0;
         if (typeof fun != "function")
@@ -173,7 +173,7 @@ if (!Array.prototype.reduceRight) {
 }
 
 // ES5 15.4.4.14
-if (!Array.prototype.indexOf) {
+if (typeof Array.prototype.indexOf !== "function") {
     Array.prototype.indexOf = function (value /*, fromIndex */ ) {
         var length = this.length;
         if (!length)
@@ -194,7 +194,7 @@ if (!Array.prototype.indexOf) {
 }
 
 // ES5 15.4.4.15
-if (!Array.prototype.lastIndexOf) {
+if (typeof Array.prototype.lastIndexOf !== "function") {
     Array.prototype.lastIndexOf = function (value /*, fromIndex */) {
         var length = this.length;
         if (!length)
@@ -219,7 +219,7 @@ if (!Array.prototype.lastIndexOf) {
 // 
 
 // ES5 15.2.3.2
-if (!Object.getPrototypeOf) {
+if (typeof Object.getPrototypeOf !== "function") {
     Object.getPrototypeOf = function (object) {
         return object.__proto__;
         // or undefined if not available in this engine
@@ -227,21 +227,21 @@ if (!Object.getPrototypeOf) {
 }
 
 // ES5 15.2.3.3
-if (!Object.getOwnPropertyDescriptor) {
+if (typeof Object.getOwnPropertyDescriptor !== "function") {
     Object.getOwnPropertyDescriptor = function (object) {
         return {}; // XXX
     };
 }
 
 // ES5 15.2.3.4
-if (!Object.getOwnPropertyNames) {
+if (typeof Object.getOwnPropertyNames !== "function") {
     Object.getOwnPropertyNames = function (object) {
         return Object.keys(object);
     };
 }
 
 // ES5 15.2.3.5 
-if (!Object.create) {
+if (typeof Object.create !== "function") {
     Object.create = function(prototype, properties) {
         if (typeof prototype != "object" || prototype === null)
             throw new TypeError("typeof prototype["+(typeof prototype)+"] != 'object'");
@@ -255,7 +255,7 @@ if (!Object.create) {
 }
 
 // ES5 15.2.3.6
-if (!Object.defineProperty) {
+if (typeof Object.defineProperty !== "function") {
     Object.defineProperty = function(object, property, descriptor) {
         var has = Object.prototype.hasOwnProperty;
         if (typeof descriptor == "object" && object.__defineGetter__) {
@@ -291,7 +291,7 @@ if (!Object.defineProperty) {
 }
 
 // ES5 15.2.3.7
-if (!Object.defineProperties) {
+if (typeof Object.defineProperties !== "function") {
     Object.defineProperties = function(object, properties) {
         for (var property in properties) {
             if (Object.prototype.hasOwnProperty.call(properties, property))
@@ -302,49 +302,49 @@ if (!Object.defineProperties) {
 }
 
 // ES5 15.2.3.8
-if (!Object.seal) {
+if (typeof Object.seal !== "function") {
     Object.seal = function (object) {
         return object;
     };
 }
 
 // ES5 15.2.3.9
-if (!Object.freeze) {
+if (typeof Object.freeze !== "function") {
     Object.freeze = function (object) {
         return object;
     };
 }
 
 // ES5 15.2.3.10
-if (!Object.preventExtensions) {
+if (typeof Object.preventExtensions !== "function") {
     Object.preventExtensions = function (object) {
         return object;
     };
 }
 
 // ES5 15.2.3.11
-if (!Object.isSealed) {
+if (typeof Object.isSealed !== "function") {
     Object.isSealed = function (object) {
         return false;
     };
 }
 
 // ES5 15.2.3.12
-if (!Object.isFrozen) {
+if (typeof Object.isFrozen !== "function") {
     Object.isFrozen = function (object) {
         return false;
     };
 }
 
 // ES5 15.2.3.13
-if (!Object.isExtensible) {
+if (typeof Object.isExtensible !== "function") {
     Object.isExtensible = function (object) {
         return true;
     };
 }
 
 // ES5 15.2.3.14
-if (!Object.keys) {
+if (typeof Object.keys !== "function") {
     Object.keys = function (object) {
         var keys = [];
         for (var name in object) {
@@ -364,7 +364,7 @@ if (!Object.keys) {
 // ES5 15.9.5.43
 // Format a Date object as a string according to a subset of the ISO-8601 standard.
 // Useful in Atom, among other things.
-if (!Date.prototype.toISOString) {
+if (typeof Date.prototype.toISOString !== "function") {
     Date.prototype.toISOString = function() {
         return (
             this.getFullYear() + "-" +
@@ -378,14 +378,14 @@ if (!Date.prototype.toISOString) {
 }
 
 // ES5 15.9.4.4
-if (!Date.now) {
+if (typeof Date.now !== "function") {
     Date.now = function () {
         return new Date().getTime();
     };
 }
 
 // ES5 15.9.5.44
-if (!Date.prototype.toJSON) {
+if (typeof Date.prototype.toJSON !== "function") {
     Date.prototype.toJSON = function (key) {
         // This function provides a String representation of a Date object for
         // use by JSON.stringify (15.12.3). When the toJSON method is called
@@ -424,7 +424,7 @@ if (!Date.prototype.toJSON) {
 // ES-5 15.3.4.5
 // http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
 var slice = Array.prototype.slice;
-if (!Function.prototype.bind) {
+if (typeof Function.prototype.bind !== "function") {
     Function.prototype.bind = function (that) { // .length is 1
         // 1. Let Target be the this value.
         var target = this;
@@ -543,7 +543,7 @@ if (!Function.prototype.bind) {
 //
 
 // ES5 15.5.4.20
-if (!String.prototype.trim) {
+if (typeof String.prototype.trim !== "function") {
     // http://blog.stevenlevithan.com/archives/faster-trim-javascript
     var trimBeginRegexp = /^\s\s*/;
     var trimEndRegexp = /\s\s*$/;
