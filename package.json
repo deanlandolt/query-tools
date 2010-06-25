@@ -1,15 +1,17 @@
 {
-	"name": "array-tools",
+	"name": "Query Tools",
 	"author": "Dean Landolt <dean@deanlandolt.com>",
 	"dependencies": [],
 	"contributors": ["Kris Zyp"],
 	"keywords": [
 		"json",
-		"schema",
 		"query",
+		"schema",
+		"sql",
+		"xquery",
         "async"
 	],
-	"githubName": "array-tools",
+	"githubName": "query-tools",
 	"type": "zip",
-	"location": "http://github.com/deanlandolt/array-tools/zipball/master"
+	"location": "http://github.com/deanlandolt/query-tools/zipball/master"
 }
